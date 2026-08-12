@@ -17,3 +17,15 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+class HabitCreate(BaseModel):
+    name: str
+    frequency: str
+
+class HabitOut(BaseModel):
+    id: int
+    name: str
+    frequency: str
+
+    class Config:
+        from_attributes = True
