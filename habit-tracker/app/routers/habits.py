@@ -9,12 +9,12 @@ router = APIRouter(prefix="/habits", tags=["habits"])
 def create_habit(
     habit: schemas.HabitCreate,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(auth.get_current_user),
+    current_user: models.User = Depends(auth.get_current_user)
 ):
     new_habit = models.Habit(
         name=habit.name,
         frequency=habit.frequency,
-        user_id=current_user.id,
+        user_id=current_user.id
     )
     db.add(new_habit)
     db.commit()
@@ -29,11 +29,11 @@ def list_habits(db: Session = Depends(get_db),current_user: models.User = Depend
 def delete_habit(
     habit_id: int,
     db: Session = Depends(get_db),
-    current_user: models.User = Depends(auth.get_current_user),
+    current_user: models.User = Depends(auth.get_current_user)
 ):
     habit = db.query(models.Habit).filter(
         models.Habit.id == habit_id,
-        models.Habit.user_id == current_user.id,
+        models.Habit.user_id == current_user.id
     ).first()
 
     if not habit:

@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from datetime import date
 
 
 class UserCreate(BaseModel):
@@ -7,7 +8,7 @@ class UserCreate(BaseModel):
 
 
 class UserOut(BaseModel):
-    id: int
+    id:int
     email: EmailStr
 
     class Config:
@@ -25,7 +26,21 @@ class HabitCreate(BaseModel):
 class HabitOut(BaseModel):
     id: int
     name: str
-    frequency: str
+    frequency:str
 
     class Config:
         from_attributes = True
+
+class HabitLogOut(BaseModel):
+    id:int
+    date: date
+    completed: bool
+
+    class Config:
+        from_atributes = True
+
+class HabitStats(BaseModel):
+    habit_id: int
+    current_streak: int
+    completion_rate_week: float
+

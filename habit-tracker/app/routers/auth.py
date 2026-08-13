@@ -14,10 +14,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    new_user = models.User(
-        email=user.email,
-        hashed_password=auth.hash_password(user.password),
-    )
+    new_user = models.User(email=user.email,hashed_password=auth.hash_password(user.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -31,7 +28,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Incorrect email or password"
         )
 
     token = auth.create_access_token(data={"sub": str(user.id)})
