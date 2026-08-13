@@ -1,6 +1,7 @@
 venv/
+.venv/
+.pytest_cache/
 __pycache__/
 *.pyc
 .env
-alembic/versions/__pycache__/
 .vscode/
