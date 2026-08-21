@@ -37,7 +37,31 @@ def log_habit(
     db.refresh(new_log)
     return new_log
 
+def calcDaily(complited_dates):
+    streak = 0
+    day = date.today()
+    while day in complited_dates:
+        streak+=1
+        day -=timedelta(days=1)
 
+    last_7_days = {date.today() - timedelta(days=i) for i in range(7)}
+    done_in_week = len(last_7_days & complited_dates)
+    completion_rate =done_in_week/7
+
+    return streak,completion_rate
+
+def calcWeekly(complited_dates):
+    streak = 0
+    day = date.today()
+    while day in complited_dates:
+        streak+=1
+        day -=timedelta(days=1)
+
+    last_7_days = {date.today() - timedelta(days=i) for i in range(7)}
+    done_in_week = len(last_7_days & complited_dates)
+    completion_rate =done_in_week/7
+
+    return streak,completion_rate
 @router.get("/{habit_id}/stats", response_model=schemas.HabitStats)
 def habit_stats(
     habit_id: int,
@@ -51,15 +75,11 @@ def habit_stats(
     ).all()
     complited_dates = {log.date for log in logs}
 
-    streak = 0
-    day = date.today()
-    while day in complited_dates:
-        streak+=1
-        day -=timedelta(days=1)
-
-    last_7_days = {date.today() - timedelta(days=i) for i in range(7)}
-    done_in_week = len(last_7_days & complited_dates)
-    completion_rate =done_in_week/7
+    if habit.frequency == "Weekly":
+        streak, completion_rate = calcWeekly(complited_dates)
+    else:
+        streak, completion_rate = calcDaily(complited_dates)
+    
 
     return schemas.HabitStats(
         habit_id = habit.id,
