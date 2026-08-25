@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import date
-
+from typing import Optional
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -43,4 +43,8 @@ class HabitStats(BaseModel):
     habit_id: int
     current_streak: int
     completion_rate_week: float
+
+class HabitUpdate(BaseModel):
+    name: Optional[str] = None
+    frequency: Optional[str] = None
 

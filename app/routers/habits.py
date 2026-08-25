@@ -42,3 +42,28 @@ def delete_habit(
     db.delete(habit)
     db.commit()
     return {"detail": "Habit deleted"}
+
+@router.patch("/{habit_id}", response_model=schemas.HabitOut)
+def update_habit(
+    habit_id: int,
+    habit_update: schemas.HabitUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    habit =db.query(models.Habit).filter(
+        models.Habit.id == habit_id,
+        models.Habit.user_id == current_user.id,
+    ).first()
+
+    if not habit:
+        raise HTTPException(status_code=404, detail="Habit not found")
+
+    if habit_update.name is not None:
+        habit.name = habit_update.name
+        
+    if habit_update.frequency is not None:
+        habit.frequency = habit_update.frequency
+
+    db.commit()
+    db.refresh(habit)
+    return habit
