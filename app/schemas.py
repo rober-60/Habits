@@ -47,4 +47,4 @@ class HabitStats(BaseModel):
 class HabitUpdate(BaseModel):
     name: Optional[str] = None
     frequency: Optional[str] = None
-
+    
