@@ -62,6 +62,7 @@ def calcWeekly(complited_dates):
     completion_rate =done_in_week/7
 
     return streak,completion_rate
+
 @router.get("/{habit_id}/stats", response_model=schemas.HabitStats)
 def habit_stats(
     habit_id: int,
@@ -86,3 +87,21 @@ def habit_stats(
         current_streak=streak,
         completion_rate_week= round(completion_rate,2)
     )
+
+@router.get("/{habit_id}/history")
+def habit_history(
+    habit_id: int,
+    days: int = 365,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    habit = get_owned_habit(habit_id, db, current_user)
+    since = date.today() - timedelta(days=days)
+
+    logs = db.query(models.HabitLog).filter(
+        models.HabitLog.habit_id == habit.id,
+        models.HabitLog.completed == True,
+        models.HabitLog.date >= since,
+    ).all()
+
+    return {"dates": [log.date.isoformat() for log in logs]}
