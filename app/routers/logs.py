@@ -51,11 +51,16 @@ def calcDaily(complited_dates):
     return streak,completion_rate
 
 def calcWeekly(complited_dates):
+    def week_start(d: date) -> date:
+        return d - timedelta(days=d.weekday())
+
+    completed_weeks = {week_start(d) for d in complited_dates}
+
     streak = 0
-    day = date.today()
-    while day in complited_dates:
-        streak+=1
-        day -=timedelta(days=1)
+    current_week = week_start(date.today())
+    while current_week in completed_weeks:
+        streak += 1
+        current_week -= timedelta(weeks=1)
 
     last_7_days = {date.today() - timedelta(days=i) for i in range(7)}
     done_in_week = len(last_7_days & complited_dates)
@@ -76,7 +81,7 @@ def habit_stats(
     ).all()
     complited_dates = {log.date for log in logs}
 
-    if habit.frequency == "Weekly":
+    if habit.frequency.lower() == "weekly":
         streak, completion_rate = calcWeekly(complited_dates)
     else:
         streak, completion_rate = calcDaily(complited_dates)
